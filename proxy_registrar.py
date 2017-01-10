@@ -193,18 +193,23 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
         #print('imprimo datos', datos)
         if datos[0] == 'INVITE':
             #print('yo soy datos', datos)
+            print("USUARIO0", usuarioRegistrado)
             with open('registered.json', 'r') as fichero:
                 self.clientes_almacenados = json.load(fichero)
                 if self.clientes_almacenados != 0:
-                    PuertoClienteInvitado = self.clientes_almacenados[datos[1].split(":")[1]]
-                    PuertoClienteInvitado = PuertoClienteInvitado[2]
-                    print("PuertoClienteInvitado ", PuertoClienteInvitado)
-                    for linea in self.clientes_almacenados:
-                        if datos[1].split(":")[1] == linea:
-                            #print(datos[1].split(":"))
-                            #print('PCI:',PuertoClienteInvitado)
-                            print('El cliente invitado está registrado.')
-                            usuarioRegistrado = 1
+                    try:
+                        PuertoClienteInvitado = self.clientes_almacenados[datos[1].split(":")[1]]
+                        PuertoClienteInvitado = PuertoClienteInvitado[2]
+                        print("PuertoClienteInvitado ", PuertoClienteInvitado)
+                        for linea in self.clientes_almacenados:
+                            if datos[1].split(":")[1] == linea:
+                                #print(datos[1].split(":"))
+                                #print('PCI:',PuertoClienteInvitado)
+                                print('El cliente invitado está registrado.')
+                                usuarioRegistrado = 1
+                    except:
+                        pass
+            print("USUARIO1", usuarioRegistrado)
             if usuarioRegistrado == 0:
                 print('SIP/2.0 404 User Not Found')
                 self.wfile.write(b'SIP/2.0 404 User Not Found\r\n')
