@@ -70,7 +70,6 @@ XMLH = XMLHandler()
 parser.setContentHandler(XMLH)
 parser.parse(open(sys.argv[1]))
 lista = XMLH.get_tags()
-# print(lista)
 
 # Datos del archivo xml
 account_username = lista[0]['account']['account_username']
@@ -92,10 +91,8 @@ if method == 'INVITE' or method == 'BYE':
     direccion = sys.argv[3]
 elif method == 'REGISTER':
     expires = sys.argv[3]
-#print('AUDIO QUE ME IMPRIMO:', rtpaudio_puerto)
 if method == 'INVITE':
     line = method + ' sip:' + direccion + ':'
-    #line += ('Enviando: ' + line)
     line += uaserver_puerto + ' SIP/2.0\r\n'
     line += ('Content-Type: application/sdp' + '\r\n')
     line += ('\n')
@@ -133,12 +130,10 @@ data = my_socket.recv(1024)
 data_recibido = data.decode('utf-8').split()
 imprimir = data.decode('utf-8')
 print('Recibiendo', imprimir)
+
 # Envio  de autorizacion... y ACK
 data = data.decode('utf-8').split(' ')
-#if method == "REGISTER":
-#print('IMPRIMO DATA', data)
 auto = data[2].split("\r\n")
-#print('RECIBO ESTE PUERTO:', data)
 if(data[2] == 'Trying' and data[5] == 'Ring' and data[8] == 'OK'):
     line = 'ACK sip:' + direccion + ":" + uaserver_puerto + ' SIP/2.0'
     my_socket.send(bytes(line, 'utf-8') + b'\r\n\r\n')
