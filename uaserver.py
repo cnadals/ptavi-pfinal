@@ -60,12 +60,12 @@ class EchoHandler(socketserver.DatagramRequestHandler):
             puerto_rtpaudio_puerto = datos[11]
             self.ListaRTP.append(puerto_rtpaudio_puerto)
             #print('listaRTP', self.ListaRTP[0])
-            Evento = 'Sent to ' + regproxy_ip + ':' + puerto_rtpaudio_puerto + ': ' + line
+            Evento = 'Received from ' + regproxy_ip + ':' + puerto_rtpaudio_puerto + ': ' + line
             NuevoLog(Evento)
         elif datos[0] == 'BYE':
             method = datos[1].split(':')[1]
             self.wfile.write(b'SIP/2.0 200 OK \r\n\r\n')
-            Evento = 'Sent to ' + regproxy_ip + ':' + regproxy_puerto + ': ' + line.decode('utf-8')
+            Evento = 'Received from ' + regproxy_ip + ':' + regproxy_puerto + ': ' + line.decode('utf-8')
             NuevoLog(Evento)
         elif datos[0] == 'ACK':
             method = datos[1].split(':')[1]
@@ -76,16 +76,16 @@ class EchoHandler(socketserver.DatagramRequestHandler):
             print('Vamos a ejecutar', aEjecutar)
             os.system(aEjecutar)
             print('Ha acabado la cancion')
-            Evento = 'Sent to ' + regproxy_ip + ':' + regproxy_puerto + ': ' + line.decode('utf-8')
+            Evento = 'Sent to ' + regproxy_ip + ':' + regproxy_puerto + ': ' + 'cancion.mp3'
             NuevoLog(Evento)
         elif datos[0] != ('INVITE' and 'BYE' and 'ACK'):
             method = datos[1].split(':')[1]
             self.wfile.write(b'SIP/2.0 405 Method Not Allowed')
-            Evento = 'Sent to ' + regproxy_ip + ':' + regproxy_puerto + ': ' + line.decode('utf-8')
+            Evento = 'Received from ' + regproxy_ip + ':' + regproxy_puerto + ': ' + line.decode('utf-8')
             NuevoLog(Evento)
         else:
             self.wfile.write(b'SIP/2.0 400 Bad Request')
-            Evento = 'Sent to ' + str(regproxy_ip) + ':' + str(regproxy_puerto) + ': ' + line.decode('utf-8')
+            Evento = 'Received from ' + str(regproxy_ip) + ':' + str(regproxy_puerto) + ': ' + line.decode('utf-8')
             NuevoLog(Evento)
 
 
@@ -151,7 +151,7 @@ if not os.path.exists(audio_path):
 
 # Creamos servidor de eco y escuchamos
 serv = socketserver.UDPServer((uaserver_ip, int(uaserver_puerto)), EchoHandler)
-print("Listening...")
+print('Listening...')
 try:
     serv.serve_forever()
     Evento = 'Finishing'
