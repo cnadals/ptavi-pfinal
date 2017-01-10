@@ -124,7 +124,6 @@ else:
     NuevoLog(Evento)
 
 # Envio de informacion
-#print('Enviando: ' + line)
 my_socket.send(bytes(line, 'utf-8') + b'\r\n')
 data = my_socket.recv(1024)
 data_recibido = data.decode('utf-8').split()
