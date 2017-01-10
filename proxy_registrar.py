@@ -276,12 +276,12 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
                 #print(autorizacion)
                 if autorizacion == 1:
                     self.TiempoExpiracion(datos, dir_sip, uaserver_puerto)
-                    Evento = 'Sent to ' + str(self.client_address[0]) + ':' + str(self.client_address[1]) + ': ' + line.decode('utf-8')
+                    Evento = 'Sent to ' + str(self.client_address[0]) + ':' + str(self.client_address[1]) + ': ' + '200 OK'
                     NuevoLog(Evento)
                 elif autorizacion == 0:
                     self.wfile.write(b'SIP/2.0 401 Unauthorized\r\n')
                     self.wfile.write(b'WWW Authenticate: Digest nonce="43558789"')
-                    Evento = 'Sent to ' + str(self.client_address[0]) + ':' + str(self.client_address[1]) + ': ' + line.decode('utf-8')
+                    Evento = 'Sent to ' + str(self.client_address[0]) + ':' + str(self.client_address[1]) + ': ' + 'SIP/2.0 401 Unauthorized\r\n' + 'WWW Authenticate: Digest nonce="43558789"'
                     NuevoLog(Evento)
             else:
                 self.wfile.write(b'SIP/2.0 401 Unauthorized\r\n')
