@@ -1,0 +1,1 @@
+Reestablecer usuarios conectados: Implementada la funcionalidad en el proxy registrar tomando los datos del fichero de datos con usuarios ya registrados. Reestablece los usuarios anteriores a la nueva sesión. 
