@@ -15,7 +15,6 @@ from xml.sax.handler import ContentHandler
 if not len(sys.argv) == 2:
     sys.exit('Usage: python3 uaserver.py config')
 _, config = sys.argv
-#port = int(port)
 
 
 #log
@@ -39,11 +38,8 @@ class EchoHandler(socketserver.DatagramRequestHandler):
         line = self.rfile.read()
         print('El cliente nos manda ', line.decode('utf-8'))
         datos = line.decode('utf-8').split()
-        #print('QUIERO BUSCAR MI PUERTO:', datos)
-        #print('PUERTO QUE TENGO QUE COMPROBAR:',rtpaudio_puerto)
         if datos[0] == 'INVITE':
             method = datos[1].split(':')[1]
-            #print(datos)
             self.wfile.write(b'SIP/2.0 100 Trying \r\n\r\n')
             self.wfile.write(b'SIP/2.0 180 Ring \r\n\r\n')
             self.wfile.write(b'SIP/2.0 200 OK \r\n\r\n')
@@ -57,7 +53,6 @@ class EchoHandler(socketserver.DatagramRequestHandler):
             self.wfile.write(bytes(line, 'utf-8'))
             puerto_rtpaudio_puerto = datos[11]
             self.ListaRTP.append(puerto_rtpaudio_puerto)
-            #print('listaRTP', self.ListaRTP[0])
             Evento = 'Received from ' + regproxy_ip
             Evento += ':' + puerto_rtpaudio_puerto + ': ' + line
             NuevoLog(Evento)
@@ -70,7 +65,6 @@ class EchoHandler(socketserver.DatagramRequestHandler):
         elif datos[0] == 'ACK':
             method = datos[1].split(':')[1]
             self.wfile.write(b'ACK')
-            #print('listaRTP', self.ListaRTP[0])
             # aEjecutar es un string con lo que se ha de ejecutar en la shell
             aEjecutar = './mp32rtp -i 127.0.0.1 -p '
             aEjecutar += self.ListaRTP[0] + ' < ' + audio_path
@@ -154,7 +148,6 @@ audio_path = lista[5]['audio']['audio_path']
 # Excepción archivo de audio
 if not os.path.exists(audio_path):
     sys.exit('El archivo ' + audio_path + ' no existe')
-#print('llega hasta aqui')
 
 # Creamos servidor de eco y escuchamos
 serv = socketserver.UDPServer((uaserver_ip, int(uaserver_puerto)), EchoHandler)
