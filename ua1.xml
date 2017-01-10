@@ -1,0 +1,8 @@
+<config>
+	<account username="carmen@nadal.com" passwd="carmen"/>
+	<uaserver ip="127.0.0.1" puerto="5060"/>
+	<rtpaudio puerto="5061"/>
+	<regproxy ip="127.0.0.1" puerto="5062"/>
+	<log path="LogUaClient.txt"/>
+	<audio path="cancion.mp3"/>
+</config>
