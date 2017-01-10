@@ -1,0 +1,5 @@
+<config>
+	<server name="MiServer" ip="127.0.0.1" puerto="5066"/>
+	<database path="registered.json" passwdpath="passwords"/>
+	<log path="LogProxy.txt"/>
+</config>
