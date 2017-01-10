@@ -227,10 +227,12 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
             with open('registered.json', 'r') as fichero:
                 self.clientes_almacenados = json.load(fichero)
                 if self.clientes_almacenados != 0:
-                    for ClienteInvitado in self.clientes_almacenados:
-                        if datos[1].split(":")[1] == ClienteInvitado:
+                    PuertoClienteInvitado = self.clientes_almacenados[datos[1].split(":")[1]]
+                    PuertoClienteInvitado = PuertoClienteInvitado[2]
+                    print("PuertoClienteInvitado ", PuertoClienteInvitado)
+                    for linea in self.clientes_almacenados:
+                        if datos[1].split(":")[1] == linea:
                             #print(datos[1].split(":"))
-                            PuertoClienteInvitado = datos[1].split(":")[2]
                             #print('PCI:',PuertoClienteInvitado)
                             print('El cliente invitado está registrado.')
                             usuarioRegistrado = 1
@@ -248,10 +250,12 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
             with open('registered.json', 'r') as fichero:
                 self.clientes_almacenados = json.load(fichero)
                 if self.clientes_almacenados != 0:
-                    for ClienteInvitado in self.clientes_almacenados:
-                        if datos[1].split(":")[1] == ClienteInvitado:
+                    PuertoClienteInvitado = self.clientes_almacenados[datos[1].split(":")[1]]
+                    PuertoClienteInvitado = PuertoClienteInvitado[2]
+                    print("PuertoClienteInvitado ", PuertoClienteInvitado)
+                    for linea in self.clientes_almacenados:
+                        if datos[1].split(":")[1] == linea:
                             #print(datos[1].split(":"))
-                            PuertoClienteInvitado = datos[1].split(":")[2]
                             #print('PCI:',PuertoClienteInvitado)
                             print('El cliente invitado está registrado.')
                             usuarioRegistrado = 1
