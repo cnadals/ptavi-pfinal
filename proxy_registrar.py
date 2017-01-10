@@ -102,9 +102,6 @@ class XMLHandler(ContentHandler):
 
         return self.lista
 
-#definir algo para que el audio_file tenga un valor
-#audio_file = mp32rtp
-
 
 class SIPRegisterHandler(socketserver.DatagramRequestHandler):
     """
@@ -132,44 +129,27 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
             json.dump(self.clientes_almacenados, fichero)
             fichero.close()
 
+
     def TiempoExpiracion(self, datos, dir_sip, uaserver_puerto):
         """
         Comprueba si el cliente ha expirado y le elimina del diccionario de clientes.
         """
         if len(self.clientes_almacenados) == 0:
             self.json2registered()
-        #print('IP del cliente: ' + self.client_address[0])
-        #print('PUERTO del cliente: ' + str(self.client_address[1]))
-        #print(datos)
-        #print('Segundos para EXPIRAR: ' + datos[4])
         if datos[0] == 'REGISTER':
-            #print('IMPRIMO DATOS:',datos)
-            #puerto_servidor = datos[1].split(':')[2]
-            #print('imprimo puerto servidor:', puerto_servidor)
             direccion = datos[1].split(':')[1]
-            #print("tiempo de exp", datos[4])
             tiempo_exp = time.gmtime(time.time() + int(datos[4]))
             tiempo_exp = time.strftime('%Y-%m-%d %H:%M:%S', tiempo_exp)
             HoraActual = time.gmtime(time.time())
             HoraActual = time.strftime('%Y-%m-%d %H:%M:%S', HoraActual)
-            #print("dirr: " + direccion + " client: " + self.client_address[0])
             self.clientes_almacenados[dir_sip] = [self.client_address[0], tiempo_exp, uaserver_puerto]
-            #print('Address: ' + self.client_address[0])
-            #print('Fecha y hora actual: ' + HoraActual)
-            #print('Expires: ' + tiempo_exp)
-            #print('clientes antes', self.clientes_almacenados)
             if (tiempo_exp <= HoraActual):
                 del self.clientes_almacenados[dir_sip]
                 print('Eliminada direccion: ' + dir_sip)
             self.wfile.write(b"SIP/2.0 200 OK\r\n\r\n")
-            #print('clientes despues', self.clientes_almacenados)
-            #if int(datos[4]) == 0:  # Compruebo si expires = 0.
-            #    print('datos4:', datos[4])
-            #    print('cliente:', clientes_almacenados[dir_sip])
-            #    del self.clientes_almacenados[dir_sip]  # Si es = 0 --> fuera.
         self.register2json()
         self.json2registered()
-        #print('Almacenado en mi diccionario: ', self.clientes_almacenados)
+
 
     def handle(self):
 
@@ -178,22 +158,12 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
         line = self.rfile.read()
         print('El cliente nos manda ', line.decode('utf-8'))
         datos = line.decode('utf-8').split()
-        #print('imprimo datos para buscar el puerto', datos)
         dir_sip = datos[1].split(':')[1]
-        #print('esta es mi direccion sip que saco arriba', dir_sip)
         uaserver_puerto = datos[1].split(':')[-1]
-        #print('probando puerto:', uaserver_puerto)
-        #print('buscando mi puerto', uaserver_puerto)
-        #print('mi direccion sip:', dir_sip)
         Evento = 'Receieved from ' + str(self.client_address[0]) + ':' + str(self.client_address[1]) + ': ' + line.decode('utf-8')
         NuevoLog(Evento)
         usuarioRegistrado = 0
-        #print('IP del cliente: ' + self.client_address[0])
-        #print('PUERTO del cliente: ' + str(self.client_address[1]))
-        #print('imprimo datos', datos)
         if datos[0] == 'INVITE':
-            #print('yo soy datos', datos)
-            print("USUARIO0", usuarioRegistrado)
             with open('registered.json', 'r') as fichero:
                 self.clientes_almacenados = json.load(fichero)
                 if self.clientes_almacenados != 0:
@@ -209,7 +179,6 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
                                 usuarioRegistrado = 1
                     except:
                         pass
-            print("USUARIO1", usuarioRegistrado)
             if usuarioRegistrado == 0:
                 print('SIP/2.0 404 User Not Found')
                 self.wfile.write(b'SIP/2.0 404 User Not Found\r\n')
@@ -260,8 +229,6 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
                     print("PuertoClienteInvitado ", PuertoClienteInvitado)
                     for linea in self.clientes_almacenados:
                         if datos[1].split(":")[1] == linea:
-                            #print(datos[1].split(":"))
-                            #print('PCI:',PuertoClienteInvitado)
                             print('El cliente invitado está registrado.')
                             usuarioRegistrado = 1
             my_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -271,7 +238,6 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
             Evento = 'Sent to ' + str(self.client_address[0]) + ':' + str(self.client_address[1]) + ': ' + line.decode('utf-8')
             NuevoLog(Evento)
         elif datos[0] == 'REGISTER':
-            #dir_sip = datos[1].split(':')[1]
             registrate = HashLib(dir_sip)
             if registrate == 1:
                 for info in datos:
@@ -291,7 +257,6 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
             else:
                 self.wfile.write(b'SIP/2.0 401 Unauthorized\r\n')
         elif datos[0] != ('INVITE' and 'BYE' and 'REGISTER' and 'ACK'):
-            #dir_sip = datos[1].split(':')[1]
             self.wfile.write(b'SIP/2.0 405 Method Not Allowed')
             Evento = 'Sent to ' + str(self.client_address[0]) + ':' + str(self.client_address[1]) + ': ' + line.decode('utf-8')
             NuevoLog(Evento)
@@ -314,7 +279,6 @@ database_path = lista[1]['database']['database_path']
 database_passwdpath = lista[1]['database']['database_passwdpath']
 log_path = lista[2]['log']['log_path']
 
-#tengo que poner a escuchar al proxy al cliente, recibir los datos y enviarlos al servidor
 Evento = 'Starting...'
 NuevoLog(Evento)
 serv = socketserver.UDPServer(('127.0.0.1', 5062), SIPRegisterHandler)
