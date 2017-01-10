@@ -34,11 +34,13 @@ class XMLHandler(ContentHandler):
     def startElement(self, name, attrs):
 
         if name == 'account':
-            self.dicc[name] = {(name + '_username'): attrs.get('username', ""), (name + '_passwd'): attrs.get('passwd', "")}
+            self.dicc[name] = {(name + '_username'): attrs.get('username', ""),
+                               (name + '_passwd'): attrs.get('passwd', "")}
             self.lista.append(self.dicc)
             self.dicc = {}
         elif name == 'uaserver':
-            self.dicc[name] = {(name + '_ip'): attrs.get('ip', ""), (name + '_puerto'): attrs.get('puerto', "")}
+            self.dicc[name] = {(name + '_ip'): attrs.get('ip', ""),
+                               (name + '_puerto'): attrs.get('puerto', "")}
             self.lista.append(self.dicc)
             self.dicc = {}
         elif name == 'rtpaudio':
@@ -46,7 +48,8 @@ class XMLHandler(ContentHandler):
             self.lista.append(self.dicc)
             self.dicc = {}
         elif name == 'regproxy':
-            self.dicc[name] = {(name + '_ip'): attrs.get('ip', ""), (name + '_puerto'): attrs.get('puerto', "")}
+            self.dicc[name] = {(name + '_ip'): attrs.get('ip', ""),
+                               (name + '_puerto'): attrs.get('puerto', "")}
             self.lista.append(self.dicc)
             self.dicc = {}
         elif name == 'log':
@@ -91,8 +94,9 @@ elif method == 'REGISTER':
     expires = sys.argv[3]
 #print('AUDIO QUE ME IMPRIMO:', rtpaudio_puerto)
 if method == 'INVITE':
-    line = method + ' sip:' + direccion + ':' + uaserver_puerto + ' SIP/2.0\r\n'
+    line = method + ' sip:' + direccion + ':'
     #line += ('Enviando: ' + line)
+    line += uaserver_puerto + ' SIP/2.0\r\n'
     line += ('Content-Type: application/sdp' + '\r\n')
     line += ('\n')
     line += ('v=0' + '\r\n')
@@ -101,15 +105,18 @@ if method == 'INVITE':
     line += ('t=0' + '\r\n')
     line += ('m=' + 'audio ' + rtpaudio_puerto + ' RTP' + '\r\n')
     print('Enviando: ' + line)
-    Evento = 'Sent to ' + str(regproxy_ip) + ':' + str(regproxy_puerto) + ': ' + line
+    Evento = 'Sent to ' + str(regproxy_ip) + ':'
+    Evento += str(regproxy_puerto) + ': ' + line
     NuevoLog(Evento)
 elif method == 'BYE':
-    line = method + ' sip:' + direccion + ':' + uaserver_puerto + ' SIP/2.0\r\n'
+    line = method + ' sip:' + direccion + ':'
+    line += uaserver_puerto + ' SIP/2.0\r\n'
     print('Enviando: ' + line)
     Evento = 'Sent to ' + regproxy_ip + ':' + regproxy_puerto + ': ' + line
     NuevoLog(Evento)
 elif method == 'REGISTER':
-    line = method + ' sip:' + account_username + ':' + uaserver_puerto + ' SIP/2.0' + '\r\n'
+    line = method + ' sip:' + account_username
+    line += ':' + uaserver_puerto + ' SIP/2.0' + '\r\n'
     line += 'Expires: ' + expires
     print('Enviando: ' + line)
     Evento = 'Sent to ' + regproxy_ip + ':' + regproxy_puerto + ': ' + line
@@ -125,7 +132,7 @@ my_socket.send(bytes(line, 'utf-8') + b'\r\n')
 data = my_socket.recv(1024)
 data_recibido = data.decode('utf-8').split()
 imprimir = data.decode('utf-8')
-print('recibiendo', imprimir)
+print('Recibiendo', imprimir)
 # Envio  de autorizacion... y ACK
 data = data.decode('utf-8').split(' ')
 #if method == "REGISTER":
@@ -137,18 +144,22 @@ if(data[2] == 'Trying' and data[5] == 'Ring' and data[8] == 'OK'):
     my_socket.send(bytes(line, 'utf-8') + b'\r\n\r\n')
     # aEjecutar es un string con lo que se ha de ejecutar en la shell
     puerto_rtpaudio_puerto = data[12]
-    aEjecutar = './mp32rtp -i 127.0.0.1 -p ' + puerto_rtpaudio_puerto + ' < ' + audio_path
+    aEjecutar = './mp32rtp -i 127.0.0.1 -p '
+    aEjecutar += puerto_rtpaudio_puerto + ' < ' + audio_path
     print('Vamos a ejecutar', aEjecutar)
     os.system(aEjecutar)
     print('Ha acabado la cancion')
-    Evento = 'Receieved from ' + regproxy_ip + ':' + uaserver_puerto + ': ' + line
+    Evento = 'Receieved from ' + regproxy_ip
+    Evento += ':' + uaserver_puerto + ': ' + line
     NuevoLog(Evento)
     Evento = 'Sent to: ' + rtpaudio_puerto + ': ' + 'cancion.mp3'
     NuevoLog(Evento)
 elif (auto[0] == 'Unauthorized'):
-    Evento = 'Receieved from ' + regproxy_ip + ':' + regproxy_puerto + ': ' + imprimir
+    Evento = 'Receieved from ' + regproxy_ip
+    Evento += ':' + regproxy_puerto + ': ' + imprimir
     NuevoLog(Evento)
-    line = method + ' sip:' + account_username + ':' + uaserver_puerto + ' SIP/2.0' + '\r\n'
+    line = method + ' sip:' + account_username
+    line += ':' + uaserver_puerto + ' SIP/2.0' + '\r\n'
     line += 'Expires: ' + expires + '\r\n'
     line += 'Authorization: Digest response="777777777777"'
     Evento = 'Sent to ' + regproxy_ip + ':' + regproxy_puerto + ': ' + line
@@ -157,7 +168,8 @@ elif (auto[0] == 'Unauthorized'):
     line = my_socket.recv(1024)
     data_recibido = line.decode('utf-8')
     print(line.decode('utf-8'))
-    Evento = 'Receieved from ' + regproxy_ip + ':' + regproxy_puerto + ': Authorized'
+    Evento = 'Receieved from ' + regproxy_ip
+    Evento += ':' + regproxy_puerto + ': Authorized'
     NuevoLog(Evento)
 print('Terminando socket...')
 Evento = 'Finishing'
