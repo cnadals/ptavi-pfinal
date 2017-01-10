@@ -47,8 +47,6 @@ class EchoHandler(socketserver.DatagramRequestHandler):
             self.wfile.write(b'SIP/2.0 100 Trying \r\n\r\n')
             self.wfile.write(b'SIP/2.0 180 Ring \r\n\r\n')
             self.wfile.write(b'SIP/2.0 200 OK \r\n\r\n')
-            #line = method + ' sip:' + direccion + ':' + uaserver_puerto + ' SIP/2.0\r\n'
-            #line += ('Enviando: ' + line)
             line = ('Content-Type: application/sdp' + '\r\n')
             line += ('\n')
             line += ('v=0' + '\r\n')
@@ -60,32 +58,38 @@ class EchoHandler(socketserver.DatagramRequestHandler):
             puerto_rtpaudio_puerto = datos[11]
             self.ListaRTP.append(puerto_rtpaudio_puerto)
             #print('listaRTP', self.ListaRTP[0])
-            Evento = 'Received from ' + regproxy_ip + ':' + puerto_rtpaudio_puerto + ': ' + line
+            Evento = 'Received from ' + regproxy_ip
+            Evento += ':' + puerto_rtpaudio_puerto + ': ' + line
             NuevoLog(Evento)
         elif datos[0] == 'BYE':
             method = datos[1].split(':')[1]
             self.wfile.write(b'SIP/2.0 200 OK \r\n\r\n')
-            Evento = 'Received from ' + regproxy_ip + ':' + regproxy_puerto + ': ' + line.decode('utf-8')
+            Evento = 'Received from ' + regproxy_ip
+            Evento += ':' + regproxy_puerto + ': ' + line.decode('utf-8')
             NuevoLog(Evento)
         elif datos[0] == 'ACK':
             method = datos[1].split(':')[1]
             self.wfile.write(b'ACK')
             #print('listaRTP', self.ListaRTP[0])
             # aEjecutar es un string con lo que se ha de ejecutar en la shell
-            aEjecutar = './mp32rtp -i 127.0.0.1 -p ' + self.ListaRTP[0] + ' < '  + audio_path
+            aEjecutar = './mp32rtp -i 127.0.0.1 -p '
+            aEjecutar += self.ListaRTP[0] + ' < ' + audio_path
             print('Vamos a ejecutar', aEjecutar)
             os.system(aEjecutar)
             print('Ha acabado la cancion')
-            Evento = 'Sent to ' + regproxy_ip + ':' + regproxy_puerto + ': ' + 'cancion.mp3'
+            Evento = 'Sent to ' + regproxy_ip
+            Evento += ':' + regproxy_puerto + ': ' + 'cancion.mp3'
             NuevoLog(Evento)
         elif datos[0] != ('INVITE' and 'BYE' and 'ACK'):
             method = datos[1].split(':')[1]
             self.wfile.write(b'SIP/2.0 405 Method Not Allowed')
-            Evento = 'Received from ' + regproxy_ip + ':' + regproxy_puerto + ': ' + line.decode('utf-8')
+            Evento = 'Received from ' + regproxy_ip
+            Evento += ':' + regproxy_puerto + ': ' + line.decode('utf-8')
             NuevoLog(Evento)
         else:
             self.wfile.write(b'SIP/2.0 400 Bad Request')
-            Evento = 'Received from ' + str(regproxy_ip) + ':' + str(regproxy_puerto) + ': ' + line.decode('utf-8')
+            Evento = 'Received from ' + str(regproxy_ip)
+            Evento += ':' + str(regproxy_puerto) + ': ' + line.decode('utf-8')
             NuevoLog(Evento)
 
 
@@ -99,11 +103,13 @@ class XMLHandler(ContentHandler):
     def startElement(self, name, attrs):
 
         if name == 'account':
-            self.dicc[name] = {(name + '_username'): attrs.get('username', ""), (name + '_passwd'): attrs.get('passwd', "")}
+            self.dicc[name] = {(name + '_username'): attrs.get('username', ""),
+                               (name + '_passwd'): attrs.get('passwd', "")}
             self.lista.append(self.dicc)
             self.dicc = {}
         elif name == 'uaserver':
-            self.dicc[name] = {(name + '_ip'): attrs.get('ip', ""), (name + '_puerto'): attrs.get('puerto', "")}
+            self.dicc[name] = {(name + '_ip'): attrs.get('ip', ""),
+                               (name + '_puerto'): attrs.get('puerto', "")}
             self.lista.append(self.dicc)
             self.dicc = {}
         elif name == 'rtpaudio':
@@ -111,7 +117,8 @@ class XMLHandler(ContentHandler):
             self.lista.append(self.dicc)
             self.dicc = {}
         elif name == 'regproxy':
-            self.dicc[name] = {(name + '_ip'): attrs.get('ip', ""), (name + '_puerto'): attrs.get('puerto', "")}
+            self.dicc[name] = {(name + '_ip'): attrs.get('ip', ""),
+                               (name + '_puerto'): attrs.get('puerto', "")}
             self.lista.append(self.dicc)
             self.dicc = {}
         elif name == 'log':
