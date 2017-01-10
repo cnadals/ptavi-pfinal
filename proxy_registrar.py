@@ -173,8 +173,6 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
                         print("PuertoClienteInvitado ", PuertoClienteInvitado)
                         for linea in self.clientes_almacenados:
                             if datos[1].split(":")[1] == linea:
-                                #print(datos[1].split(":"))
-                                #print('PCI:',PuertoClienteInvitado)
                                 print('El cliente invitado está registrado.')
                                 usuarioRegistrado = 1
                     except:
@@ -206,8 +204,6 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
                     print("PuertoClienteInvitado ", PuertoClienteInvitado)
                     for linea in self.clientes_almacenados:
                         if datos[1].split(":")[1] == linea:
-                            #print(datos[1].split(":"))
-                            #print('PCI:',PuertoClienteInvitado)
                             print('El cliente invitado está registrado.')
                             usuarioRegistrado = 1
             linea = datos[0] + ' sip:' + dir_sip + ' SIP/2.0\r\n'
@@ -241,10 +237,8 @@ class SIPRegisterHandler(socketserver.DatagramRequestHandler):
             registrate = HashLib(dir_sip)
             if registrate == 1:
                 for info in datos:
-                    #print(info)
                     if info == 'Authorization:':
                         autorizacion = 1
-                #print(autorizacion)
                 if autorizacion == 1:
                     self.TiempoExpiracion(datos, dir_sip, uaserver_puerto)
                     Evento = 'Sent to ' + str(self.client_address[0]) + ':' + str(self.client_address[1]) + ': ' + '200 OK'
