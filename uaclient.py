@@ -112,7 +112,7 @@ elif method == 'REGISTER':
     line = method + ' sip:' + account_username + ':' + uaserver_puerto + ' SIP/2.0' + '\r\n'
     line += 'Expires: ' + expires
     print('Enviando: ' + line)
-    Evento = 'Sent to ' + regproxy_ip + ':' + uaserver_puerto + ': ' + line
+    Evento = 'Sent to ' + regproxy_ip + ':' + regproxy_puerto + ': ' + line
     NuevoLog(Evento)
 else:
     print('Usage: python uaclient.py config method option')
@@ -143,15 +143,21 @@ if(data[2] == 'Trying' and data[5] == 'Ring' and data[8] == 'OK'):
     print('Ha acabado la cancion')
     Evento = 'Receieved from ' + regproxy_ip + ':' + uaserver_puerto + ': ' + line
     NuevoLog(Evento)
+    Evento = 'Sent to: ' + rtpaudio_puerto + ': ' + 'cancion.mp3'
+    NuevoLog(Evento)
 elif (auto[0] == 'Unauthorized'):
+    Evento = 'Receieved from ' + regproxy_ip + ':' + regproxy_puerto + ': ' + imprimir
+    NuevoLog(Evento)
     line = method + ' sip:' + account_username + ':' + uaserver_puerto + ' SIP/2.0' + '\r\n'
     line += 'Expires: ' + expires + '\r\n'
     line += 'Authorization: Digest response="777777777777"'
+    Evento = 'Sent to ' + regproxy_ip + ':' + regproxy_puerto + ': ' + line
+    NuevoLog(Evento)
     my_socket.send(bytes(line, 'utf-8') + b'\r\n\r\n')
     line = my_socket.recv(1024)
     data_recibido = line.decode('utf-8')
     print(line.decode('utf-8'))
-    Evento = 'Receieved from ' + regproxy_ip + ':' + regproxy_puerto + ': ' + data_recibido
+    Evento = 'Receieved from ' + regproxy_ip + ':' + regproxy_puerto + ': Authorized'
     NuevoLog(Evento)
 print('Terminando socket...')
 Evento = 'Finishing'
